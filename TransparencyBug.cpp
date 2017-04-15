@@ -61,7 +61,7 @@ ATOM RegisterWndClass(HINSTANCE hInstance)
 	wcex.lpfnWndProc = WndProc;
 	wcex.hInstance = hInstance;
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(1 + COLOR_BTNFACE);
+	wcex.hbrBackground = CreateSolidBrush(RGB(0, 0, 255));
 	wcex.lpszClassName = WindowClassName;
 
 	return RegisterClassEx(&wcex);
@@ -70,24 +70,29 @@ ATOM RegisterWndClass(HINSTANCE hInstance)
 // Create window
 BOOL SetupWindow(HINSTANCE hinst)
 {
-	wndRect.top = 0;
-	wndRect.bottom = 500;
-	wndRect.left = 0;
-	wndRect.right = 500;
+	wndRect.top = GetSystemMetrics(SM_CYSCREEN) / 4;
+	wndRect.bottom = GetSystemMetrics(SM_CYSCREEN) / 2;
+	wndRect.left = GetSystemMetrics(SM_CXSCREEN) / 4;
+	wndRect.right = GetSystemMetrics(SM_CXSCREEN) / 2;
 	
 	RegisterWndClass(hinst);
 
-	hMainWnd = CreateWindowEx (WS_EX_TOPMOST,
+	/*
+	* Here we create a layered, transparent window which will allow mouse events to "click through" to whatever underlying window
+	*/
+	hMainWnd = CreateWindowEx (WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT,
 		WindowClassName, WindowTitle,
 		WS_OVERLAPPEDWINDOW,
-		0, 0, wndRect.right, wndRect.bottom, NULL, NULL, hinst, NULL);
+		wndRect.left, wndRect.top, wndRect.right, wndRect.bottom, NULL, NULL, hinst, NULL);
 	if (!hMainWnd)
 	{
 		return FALSE;
 	}
 
-	// Make the window opaque.
-	SetLayeredWindowAttributes(hMainWnd, 0, 255, LWA_ALPHA);
+	/*
+	* Making the window transparent makes it totally transparent. Let's bring the opacity back up a bit so we can see where it is.
+	*/
+	SetLayeredWindowAttributes(hMainWnd, 0, 127, LWA_ALPHA);
 
 	return TRUE;
 }
