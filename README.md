@@ -1,3 +1,6 @@
+# NOTE
+Microsoft has resolved this issue. I'm leaving the code here for demo purposes.
+
 # TransparencyBug
 A bare-bones, stripped-down Win32 application to demonstrate how Microsoft Edge no longer plays well with layered windows.
 
